@@ -1,0 +1,52 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ronin-api
+  namespace: default
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`api.xn--gmqy16e.co`)
+      kind: Rule
+      services:
+        - name: ronin-api-proxy
+          port: 80
+  tls:
+    secretName: api.xn--gmqy16e.co
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api.xn--gmqy16e.co
+  namespace: default
+spec:
+  dnsNames:
+    - api.xn--gmqy16e.co
+  secretName: api.xn--gmqy16e.co
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ronin-api-proxy
+  namespace: default
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 31200
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ronin-api-proxy
+  namespace: default
+subsets:
+- addresses:
+    - ip: 10.8.0.2
+  ports:
+    - port: 31040
