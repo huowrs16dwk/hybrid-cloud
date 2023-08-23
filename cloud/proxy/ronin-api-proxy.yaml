@@ -27,7 +27,7 @@ spec:
   secretName: api.xn--gmqy16e.co
   issuerRef:
     name: letsencrypt
-    kind: ClusterIssuer
+    kind: Issuer
 ---
 apiVersion: v1
 kind: Service
